@@ -12,7 +12,7 @@
         <el-divider direction="vertical" />
         <el-link type="primary" @click="handleSummit">Summit your code</el-link>
         <el-divider direction="vertical" />
-        <el-link type="primary" @click="handleResult"> Add your result</el-link>
+        <el-link type="primary" @click="handleResult">Download results</el-link>
       </div>
 
       <div class="page-search">
@@ -219,6 +219,7 @@ const loadExcelData = async () => {
 
     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
     if (jsonData.length > 0) {
+      // console.log("Excel 文件解析成功:", jsonData);
       // 第一行作为列名
       const headers = jsonData[0];
       const rows = jsonData.slice(2).map((row) => {
@@ -308,7 +309,7 @@ const filterExcelData = () => {
 
   state.baseData = state.tableData.find((item) => item["Baseline tag"] === "T");
 
-  // 排序：Baseline tag 为 T 的排第一，其余按 Matrix-all 从小到大排序
+  // 排序：Baseline tag 为 T 的排第一，其余按 Matrix-all 从大到小排序
   state.tableData.sort((a, b) => {
     const isABaseline = a["Baseline tag"] === "T";
     const isBBaseline = b["Baseline tag"] === "T";
@@ -320,7 +321,7 @@ const filterExcelData = () => {
     // 如果都是或都不是 baseline，按 Matrix-all 排序
     const aValue = parseFloat(a["Matrix-all"]) || 0;
     const bValue = parseFloat(b["Matrix-all"]) || 0;
-    return aValue - bValue;
+    return bValue - aValue;
   });
 
   console.log("state.tableData", state.tableData);
