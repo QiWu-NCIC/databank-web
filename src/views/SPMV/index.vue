@@ -81,7 +81,7 @@
           Kernel Source
         </div>
         <div class="bar-title">
-          <div class="title">Speedup（Higher is better）.</div>
+          <div class="title">GeoMean Speedup (Higher is better).</div>
           <div class="subtitle">
             Different colors on the bar chart represent the same values shown at
             different scales (1x, 10x, 100x zoom)
@@ -117,9 +117,12 @@
             <div class="legend-item" :style="{ backgroundColor: value }"></div>
           </el-tooltip>
         </div>
+        <div class="time-tips">
+          show 100 items only，download results for more detail
+        </div>
         <div class="time-table">
           <el-scrollbar
-            max-height="calc(100vh - 250px)"
+            max-height="calc(100vh - 280px)"
             class="table-scrollbar"
           >
             <div class="table-wrapper">
@@ -256,7 +259,9 @@ const loadExcelData = async () => {
       });
 
       excelData.value = rows;
-      matList.value = headers.slice(7);
+      const allMatList = headers.slice(7);
+      matList.value =
+        allMatList.length > 100 ? allMatList.slice(0, 100) : allMatList;
       machineCompilerOptins.value = [...new Set(machineCompilerList)];
       dataTypeOptins.value = [...new Set(dataTypeList)];
       timePhaseOptins.value = [...new Set(timePhaseList)];
@@ -515,33 +520,46 @@ onMounted(() => {
 }
 
 .time {
+  .time-legend {
+    padding-left: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    .legend-item {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+  .time-tips {
+    padding-left: 20px;
+    color: #f56c6c;
+    margin-bottom: 10px;
+  }
   .time-table {
-    // border: 1px solid #e0e0e0;
-
     .table-scrollbar {
-      ::v-deep(.el-scrollbar__bar) {
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      &:hover ::v-deep(.el-scrollbar__bar) {
-        opacity: 1;
-      }
-
-      ::v-deep(.el-scrollbar__wrap) {
-        overflow-x: auto;
+      ::v-deep(.el-scrollbar__thumb) {
+        opacity: 0.6;
       }
     }
 
     .table-wrapper {
       .data-table {
-        width: 100%;
+        width: max-content;
+        min-width: 100%;
         border-collapse: collapse;
         font-size: 14px;
 
         th,
         td {
-          // border: 1px solid #e0e0e0;
           padding: 8px 12px;
           text-align: center;
           min-width: 120px;
@@ -553,30 +571,46 @@ onMounted(() => {
             font-weight: bold;
             font-size: 16px;
             color: #333333;
-            white-space: nowrap;
             position: sticky;
             top: 0;
             z-index: 2;
+            word-wrap: break-word;
+            word-break: break-all;
           }
           .mat-header {
             background: #ffffff;
             border: none;
-            z-index: 3;
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+          }
+          .kernel-header {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
           }
         }
 
         tbody {
           .mat-cell {
-            width: 120px;
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
             background: #ffffff;
             text-align: right;
             font-size: 16px;
             color: #666666;
-            white-space: nowrap;
+            word-wrap: break-word;
+            word-break: break-all;
           }
           .data-cell {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
             font-size: 14px;
             color: #444444;
+            word-wrap: break-word;
+            word-break: break-all;
           }
         }
 
@@ -590,26 +624,6 @@ onMounted(() => {
           z-index: 3;
         }
       }
-    }
-  }
-}
-
-.time-legend {
-  padding-left: 20px;
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  .legend-item {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
   }
 }
